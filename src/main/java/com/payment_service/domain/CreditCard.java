@@ -2,6 +2,7 @@ package com.payment_service.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,8 +19,8 @@ public class CreditCard {
     @NotNull(message = "Credit Card number must not be null.")
     @Size(min=16, message="Credit Card number must not be empty.")
     @Id
-    @GeneratedValue
-    private String number;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long number;
 
     @NotNull(message = "Credit card holder name must not be null.")
     @Size(min=1, message="Credit card holder name must not be empty.")
