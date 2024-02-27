@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class CreditCard {
 
     @NotNull(message = "Credit Card number must not be null.")
-    @Size(min=16, message="Credit Card number must not be empty.")
+    @Digits(integer=16, fraction=0, message="Credit Card number must not be empty.")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long number;

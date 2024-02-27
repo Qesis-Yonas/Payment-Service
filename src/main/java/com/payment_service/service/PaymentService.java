@@ -7,6 +7,8 @@ import com.payment_service.domain.Payment;
 import com.payment_service.repository.CreditCardRepository;
 import com.payment_service.repository.CustomerRepository;
 import com.payment_service.repository.PaymentRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +25,27 @@ public class PaymentService {
     @Autowired
     private CreditCardRepository creditCardRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager; // Inject EntityManager
+
+
     public Payment makePayment(Payment payment) {
         // Check if the Customer associated with the Payment exists
+
         if (payment.getCustomer() != null && payment.getCustomer().getCustomerId() == null) {
             // If the Customer does not exist, save it first
             Customer savedCustomer = customerRepository.save(payment.getCustomer());
-            // Set the saved Customer to the Payment
+            // Setting the saved Customer to the Payment
             payment.setCustomer(savedCustomer);
         }
+
+
+        payment.setStatus(Payment.PaymentStatus.APPROVED);
+
         // Save the Payment
         return paymentRepository.save(payment);
     }
+
 
     @Transactional
     public Payment createPayment(Payment payment) {
@@ -44,14 +56,21 @@ public class PaymentService {
         CreditCard creditCard = payment.getCreditCard();
 
         // If the credit card is new, save it first to ensure it's managed
-        if (creditCard != null && creditCard.getNumber() == null) {
-            creditCard = creditCardRepository.save(creditCard);
-        }
 
-        // Associate the managed CreditCard entity with the payment
+        if (creditCard != null && creditCard.getNumber() != null) {
+            CreditCard existingCreditCard = creditCardRepository.findByNumber(creditCard.getNumber());
+            if (existingCreditCard != null) {
+                // If the credit card already exists, use the existing one
+                creditCard = existingCreditCard;
+            } else {
+                // If it doesn't exist, save the new credit card
+                creditCard = creditCardRepository.save(creditCard);
+            }
+        }
+        // Association of the managed CreditCard entity with the payment
         payment.setCreditCard(creditCard);
 
-        // Persist the payment
+        // Persisting the payment
         return paymentRepository.save(payment);
     }
 }
@@ -60,15 +79,7 @@ public class PaymentService {
 
 
 
-//        payment.setStatus(Payment.PaymentStatus.APPROVED);
-//        Payment savePayment = paymentRepositiory.save(payment);
-//
-//        if (payment.getType().equals(Payment.PaymentMethod.SLIP)) {
-//            return payment;
-//        } else {
-//            return savePayment;
-//        }
-//    }
+
 
 
 

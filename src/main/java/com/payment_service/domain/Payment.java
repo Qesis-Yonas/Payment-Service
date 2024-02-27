@@ -34,7 +34,8 @@ public class Payment {
     private Customer customer;
 
     @Valid
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "credit_card_number")
     private CreditCard creditCard;
 
     private PaymentStatus status;
