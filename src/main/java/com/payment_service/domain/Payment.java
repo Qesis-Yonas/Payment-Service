@@ -19,13 +19,10 @@ public class Payment {
     public static final String CUSTOMER_NULL_VALIDATION_MESSAGE = "Customer can not be null";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long paymentId;
-
-    @NotNull(message = PAYMENT_AMOUNT_NULL_VALIDATION_MESSAGE)
     private Double paymentAmount;
 
-    private PaymentMethod paymentType;
 
     @NotNull(message = CUSTOMER_NULL_VALIDATION_MESSAGE)
     @Valid
@@ -34,14 +31,14 @@ public class Payment {
     private Customer customer;
 
     @Valid
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "credit_card_number")
     private CreditCard creditCard;
 
     private PaymentStatus status;
 
     public enum PaymentStatus {
-        APPROVED;
+        APPROVED, DISAPROVED;
     }
 
     public PaymentMethod getType() {

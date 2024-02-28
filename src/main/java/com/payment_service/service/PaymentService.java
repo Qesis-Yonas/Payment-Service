@@ -10,10 +10,14 @@ import com.payment_service.repository.PaymentRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
+@Slf4j
 public class PaymentService {
 
     @Autowired
@@ -29,8 +33,10 @@ public class PaymentService {
     private EntityManager entityManager; // Inject EntityManager
 
 
+    @Transactional
     public Payment makePayment(Payment payment) {
         // Check if the Customer associated with the Payment exists
+        CreditCard creditCard = payment.getCreditCard();
 
         if (payment.getCustomer() != null && payment.getCustomer().getCustomerId() == null) {
             // If the Customer does not exist, save it first
@@ -43,7 +49,7 @@ public class PaymentService {
         payment.setStatus(Payment.PaymentStatus.APPROVED);
 
         // Save the Payment
-        return paymentRepository.save(payment);
+       return createPayment(payment);
     }
 
 
@@ -72,6 +78,13 @@ public class PaymentService {
 
         // Persisting the payment
         return paymentRepository.save(payment);
+    }
+
+    public Payment getPayment(Long id) {
+        Optional<Payment> payment= paymentRepository.findByPaymentId(id);
+        Payment payment1 = payment.get();
+
+        return payment1;
     }
 }
 

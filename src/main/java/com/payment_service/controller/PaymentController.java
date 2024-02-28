@@ -1,6 +1,8 @@
 package com.payment_service.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.payment_service.domain.Payment;
 import com.payment_service.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +20,32 @@ public class PaymentController {
 
     @PostMapping("/makePayment")
     public ResponseEntity<?> makePayment(@RequestBody Payment payment){
-        Payment newPayment=paymentService.createPayment(payment);
+        Payment newPayment=paymentService.makePayment(payment);
         return new ResponseEntity<Payment>(newPayment, HttpStatus.OK);
 //        return ResponseEntity.ok(newPayment);
     }
 
 
+    @GetMapping("/{paymentId}")
+    public Payment getPayment(@PathVariable("paymentId") Long id){
+        Payment payment=paymentService.getPayment(id);
+        ObjectMapper mapper = new ObjectMapper();
+        Payment payment1 = new Payment();
+        String Json= "";
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+        try {
+             Json = mapper.writeValueAsString(payment);
+              payment1= mapper.convertValue(Json,Payment.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
+        if(payment!=null){
+            return payment1 ;
+        }
+        return null; //new ResponseEntity<>(payment, HttpStatus.NOT_FOUND);
+//        return ResponseEntity.ok(newPayment);
+    }
 
 
 
