@@ -1,6 +1,7 @@
 package com.payment_service.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.payment_service.domain.Payment;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 @RestController
@@ -29,21 +32,25 @@ public class PaymentController {
     @GetMapping("/{paymentId}")
     public ResponseEntity<?> getPayment(@PathVariable("paymentId") Long id){
         Payment payment=paymentService.getPayment(id);
-        ObjectMapper mapper = new ObjectMapper();
-        Payment payment1 = new Payment();
-        String json= "";
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
-        try {
-             json = mapper.writeValueAsString(payment);
-              payment1= mapper.convertValue(json,Payment.class);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        if (payment != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-        if(payment!=null){
-            return new ResponseEntity<Payment>(payment1,HttpStatus.OK) ;
+            try {
+                String json = mapper.writeValueAsString(payment);
+                Payment payment1 = mapper.readValue(json, Payment.class);
+                return ResponseEntity.ok(payment1);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        return null; //new ResponseEntity<>(payment, HttpStatus.NOT_FOUND);
+        //new ResponseEntity<>(payment, HttpStatus.NOT_FOUND);
 //        return ResponseEntity.ok(newPayment);
     }
 

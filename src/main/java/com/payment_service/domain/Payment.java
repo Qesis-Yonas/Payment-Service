@@ -41,16 +41,41 @@ public class Payment {
         APPROVED, DISAPROVED;
     }
 
+    public enum PaymentMethod {
+        SLIP, CREDIT_CARD;
+    }
+
     public PaymentMethod getType() {
         if (creditCard != null) {
             return PaymentMethod.CREDIT_CARD;
         }
         return PaymentMethod.SLIP;
     }
+/*
+    public enum PaymentStatus2 {
+        PENDING,
+        SUCCESS,
+        FAILED;
 
-    public enum PaymentMethod {
-        SLIP, CREDIT_CARD;
+        // Method to get status based on payment method
+        public static PaymentStatus2 getStatus(PaymentMethod paymentMethod) {
+            if (paymentMethod == PaymentMethod.SLIP) {
+                return PENDING; // Payments via slip are initially pending
+            } else {
+                // Assuming credit card payments are immediately successful
+                return SUCCESS;
+            }
+        }
     }
+*/
+
+//    public PaymentStatus getStatus() {
+//        if (creditCard != null) {
+//            return PaymentMethod.CREDIT_CARD;
+//        }
+//        return PaymentMethod.SLIP;
+//    }
+
 
 }
 
