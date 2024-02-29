@@ -27,21 +27,21 @@ public class PaymentController {
 
 
     @GetMapping("/{paymentId}")
-    public Payment getPayment(@PathVariable("paymentId") Long id){
+    public ResponseEntity<?> getPayment(@PathVariable("paymentId") Long id){
         Payment payment=paymentService.getPayment(id);
         ObjectMapper mapper = new ObjectMapper();
         Payment payment1 = new Payment();
-        String Json= "";
+        String json= "";
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
         try {
-             Json = mapper.writeValueAsString(payment);
-              payment1= mapper.convertValue(Json,Payment.class);
+             json = mapper.writeValueAsString(payment);
+              payment1= mapper.convertValue(json,Payment.class);
         }catch (Exception e){
             e.printStackTrace();
         }
 
         if(payment!=null){
-            return payment1 ;
+            return new ResponseEntity<Payment>(payment1,HttpStatus.OK) ;
         }
         return null; //new ResponseEntity<>(payment, HttpStatus.NOT_FOUND);
 //        return ResponseEntity.ok(newPayment);
