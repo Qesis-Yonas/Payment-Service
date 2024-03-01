@@ -1,0 +1,15 @@
+{
+  "paymentAmount": 11123.00,
+  "paymentType": "CREDIT_CARD",
+  "customer": {
+    "name": "Efrem Weldetsion",
+    "email": "efrem.wel@gmail.com"
+  },
+  "creditCard": {
+    "number": "12345678123456781",
+    "holderName": "Yonas Weldetsion",
+    "expirationDate": "12/24",
+    "cvv": "123"
+  },
+  "status": "APPROVED"
+}
