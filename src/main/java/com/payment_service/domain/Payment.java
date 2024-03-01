@@ -21,6 +21,8 @@ public class Payment {
     @Id
     @GeneratedValue
     private Long paymentId;
+
+
     private Double paymentAmount;
 
 
